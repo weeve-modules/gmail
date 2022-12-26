@@ -6,14 +6,13 @@ Edit this file to implement your module.
 """
 
 import re
-import werkzeug
 import smtplib
+import bottle
 from logging import getLogger
 from .params import PARAMS
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
+from email.mime.image import MIMEImage
 
 log = getLogger("module")
 
@@ -54,11 +53,10 @@ def module_main(received_data: any) -> str:
         msg.attach(MIMEText(email_message, 'plain'))
 
         # check if received data is attachment file and add the attachment to the email
-        if type(received_data) == werkzeug.datastructures.FileStorage:
-            attachment = MIMEBase('application', 'octet-stream')
-            attachment.set_payload(received_data.read())
-            encoders.encode_base64(attachment)
-            attachment.add_header('Content-Disposition', "attachment; filename=attachment-file")
+        if type(received_data) == bottle.FileUpload:
+            log.debug("Adding attachment to the email.")
+            attachment = MIMEImage(received_data.file.read())
+            attachment.add_header('Content-Disposition', f"attachment; filename={PARAMS['ATTACHMENT_FILE_LABEL']}")
 
             msg.attach(attachment)
 

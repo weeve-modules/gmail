@@ -67,8 +67,8 @@ def request_handler():
 
             if send_error:
                 log.error(send_error)
-
-            log.debug("Data sent.")
+            else:
+                log.debug("Data sent.")
 
         # notify previous module that data has been received
         return "OK - data accepted"
