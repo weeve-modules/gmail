@@ -1,13 +1,19 @@
 version: "3.0"
 services:
-  boilerplate:
+  gmail:
     build:
       context: ../
       dockerfile: docker/Dockerfile
     environment:
-      MODULE_NAME: "boilerplate"
+      MODULE_NAME: "gmail"
       MODULE_TYPE: "Output"
       INGRESS_HOST: "0.0.0.0"
       INGRESS_PORT: "80"
+      SENDER_EMAIL: "james.bond@gmail.com"
+      SENDER_PASS: "kfgehwkj"
+      RECIPIENT_EMAIL: "ms.m@gmail.com"
+      EMAIL_SUBJECT: "Daily status report"
+      EMAIL_BODY_MESSAGE: "See the attachment"
+      ATTACHMENT_FILE_LABEL: ""
     ports:
       - 80:80
