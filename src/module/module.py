@@ -38,19 +38,19 @@ def module_main(received_data: any) -> str:
 
     try:
         # compose email message
-        email_message = PARAMS["EMAIL_BODY_MESSAGE"]
+        body = PARAMS["EMAIL_BODY_MESSAGE"]
 
         # if received data is json not attachment file then compose the email body from received data
         if type(received_data) == dict:
             for label in [x[2:-2] for x in re.findall("{{.*?}}", PARAMS["EMAIL_BODY_MESSAGE"])]:
                 # emplace data into the email message
-                email_message = email_message.replace("{{" + label + "}}", str(received_data[label]))
+                body = body.replace("{{" + label + "}}", str(received_data[label]))
 
         msg = MIMEMultipart()
         msg['From'] = PARAMS["SENDER_EMAIL"]
         msg['To'] = PARAMS["RECIPIENT_EMAIL"]
         msg['Subject'] = PARAMS["EMAIL_SUBJECT"]
-        msg.attach(MIMEText(email_message, 'plain'))
+        msg.attach(MIMEText(body, 'plain'))
 
         # check if received data is attachment file and add the attachment to the email
         if type(received_data) == bottle.FileUpload:
