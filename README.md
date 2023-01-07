@@ -18,7 +18,7 @@
 
 ## Description
 
-Send data or files (as attachments) to your GMail. The module accepts standard JSON object (headers: `application/json` or `application/*+json`) or files (we use `bottle` framework so after receiving it has type: `bottle.FileUpload`) as input. You can compose an email main body (content message) using double curly brackets to access labels from your data (i.e. to access data assigned to temperature label use {{temperature}}) or you can hard-type your message. The module can send emails with or without attachments.
+Send data or files (as attachments) via email from your GMail account. The module accepts standard JSON object (headers: `application/json` or `application/*+json`) or files (we use `bottle` framework so after receiving it has type: `bottle.FileUpload`) as input. You can compose an email main body (content message) using double curly brackets to access labels from your data (i.e. to access data assigned to temperature label use {{temperature}}) or you can hard-type your message. The module can send emails with or without attachments.
 
 ## Environment Variables
 
