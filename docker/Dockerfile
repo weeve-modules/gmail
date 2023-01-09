@@ -4,6 +4,8 @@ FROM python:3.8-slim
 COPY ./docker/docker-entrypoint.sh ./requirements.txt /app/
 
 # implement multi-stage build to leverage build cache (does not re-install packages when code changes)
+RUN apt-get update
+RUN apt-get -y install libmagic1
 RUN pip install -r /app/requirements.txt
 
 # copy source code

@@ -8,10 +8,12 @@ Edit this file to implement your module.
 import re
 import smtplib
 import bottle
+import magic
 from logging import getLogger
 from .params import PARAMS
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 from email.mime.image import MIMEImage
 
 log = getLogger("module")
@@ -20,6 +22,16 @@ log = getLogger("module")
 SERVER = smtplib.SMTP('smtp.gmail.com', 587)
 SERVER.starttls()
 SERVER.login(PARAMS["SENDER_EMAIL"], PARAMS["SENDER_PASS"])
+
+# for checking incoming file type
+mime = magic.Magic(mime=True)
+
+# supported MIME classes
+mime_classes = {
+    "application": MIMEApplication,
+    "image": MIMEImage,
+    "text": MIMEText
+}
 
 def module_main(received_data: any) -> str:
     """
@@ -55,7 +67,12 @@ def module_main(received_data: any) -> str:
         # check if received data is attachment file and add the attachment to the email
         if type(received_data) == bottle.FileUpload:
             log.debug("Adding attachment to the email.")
-            attachment = MIMEImage(received_data.file.read())
+
+            # check received file type and create a corresponding MIME object
+            file = received_data.file.read()
+            file_type = mime.from_buffer(file)
+            log.debug(f"Received file type: {file_type}")
+            attachment = mime_classes[file_type.split("/")[0]](file)
             attachment.add_header('Content-Disposition', f"attachment; filename={PARAMS['ATTACHMENT_FILE_LABEL']}")
 
             msg.attach(attachment)
