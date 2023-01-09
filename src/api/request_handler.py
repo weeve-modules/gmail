@@ -32,6 +32,8 @@ def request_handler():
     global data_processing_thread
 
     try:
+        received_data = None
+
         # receive data from the previous module
         if request.content_type.startswith('application/json') or request.content_type.startswith('application/*+json'):
             # it's a standard JSON object
@@ -48,27 +50,20 @@ def request_handler():
 
             log.debug("Validation successful.")
 
-            # data accepted, so add data to the queue
-            data_Q.put(received_data)
-
-            try:
-                log.debug("Invoking the thread to process new data")
-                data_processing_thread.resume()
-
-            except Exception as e:
-                log.error(f"Failed to invoke a thread to process new data. {e}")
         else:
             # it's a JSON object with a file
             received_data = request.files[PARAMS['ATTACHMENT_FILE_LABEL']]
             log.debug("Received file data.")
 
-            # pass data to the module logic
-            send_error = module_main(received_data)
+        # data accepted, so add data to the queue
+        data_Q.put(received_data)
 
-            if send_error:
-                log.error(send_error)
-            else:
-                log.debug("Data sent.")
+        try:
+            log.debug("Invoking the thread to process new data")
+            data_processing_thread.resume()
+
+        except Exception as e:
+            log.error(f"Failed to invoke a thread to process new data. {e}")
 
         # notify previous module that data has been received
         return "OK - data accepted"
